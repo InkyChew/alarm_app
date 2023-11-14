@@ -8,18 +8,26 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import java.time.YearMonth
 
 @Dao
 interface DayDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(day: Day)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlarm(alarm: DayAlarm)
+
     @Update
     suspend fun update(day: Day)
 
+    @Update
+    suspend fun updateAlarm(alarm: DayAlarm)
+
     @Delete
     suspend fun delete(day: Day)
+
+    @Delete
+    suspend fun deleteAlarm(alarm: DayAlarm)
 
     @Query("SELECT * from day WHERE id = :id")
     fun get(id: Int): Flow<Day>
