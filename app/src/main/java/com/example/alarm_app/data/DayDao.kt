@@ -23,6 +23,17 @@ interface DayDao {
     @Update
     suspend fun updateAlarm(alarm: DayAlarm)
 
+    @Transaction
+    suspend fun updateAlarms(alarms: List<DayAlarm>) {
+        alarms.forEach {
+            if(it.id == 0) {
+                insertAlarm(it)
+            } else {
+                updateAlarm(it)
+            }
+        }
+    }
+
     @Delete
     suspend fun delete(day: Day)
 
@@ -34,6 +45,9 @@ interface DayDao {
 
     @Query("SELECT * from day WHERE strftime('%Y-%m', date) = :yearMonth ORDER BY date ASC")
     fun getAll(yearMonth: String): Flow<List<Day>>
+
+    @Query("SELECT * from day WHERE strftime('%Y-%m', date) = :yearMonth ORDER BY date ASC")
+    fun getAllWithAlarms(yearMonth: String): Flow<List<DayWithAlarms>>
 
     @Transaction
     @Query("SELECT * from day WHERE id = :id")

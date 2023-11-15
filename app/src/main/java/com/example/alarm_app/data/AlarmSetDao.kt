@@ -63,4 +63,7 @@ interface AlarmSetDao {
     @Transaction
     @Query("SELECT * FROM alarmSet WHERE id = :id")
     fun getWithAlarms(id: Int): Flow<AlarmSetWithAlarms>
+
+    @Query("SELECT * from alarmSetAlarm WHERE alarmSetId = :alarmSetId")
+    fun getAlarms(alarmSetId: Int): Flow<List<AlarmSetAlarm>>
 }

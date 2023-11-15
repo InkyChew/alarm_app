@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.alarm_app.ui.AlarmGroupScreen
 import com.example.alarm_app.ui.AllAlarmGroupScreen
+import com.example.alarm_app.ui.MainScreen
 
 @Composable
 fun AlarmNavHost(
@@ -17,9 +18,15 @@ fun AlarmNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AllAlarmGroupDestination.route,
+        startDestination = MainDestination.route,
         modifier = modifier
     ) {
+        composable(route = MainDestination.route) {
+            MainScreen(
+                modifier = Modifier
+            )
+        }
+
         composable(route = AllAlarmGroupDestination.route) {
             AllAlarmGroupScreen(
                 navigateToAlarmGroup = {

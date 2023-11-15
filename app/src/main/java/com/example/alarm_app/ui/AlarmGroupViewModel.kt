@@ -57,11 +57,8 @@ class AlarmGroupViewModel (
     private fun getAlarmSet(id: Int) {
         viewModelScope.launch {
             try {
-                alarmSetRepo.getStreamWithAlarms(id).collect{alarmSetWithAlarms ->
-                    _alarmSet.value = alarmSetWithAlarms.alarmSet
-                    _alarmSet.update {
-                        it.copy(alarms = alarmSetWithAlarms.alarms)
-                    }
+                alarmSetRepo.getStreamWithAlarms(id).collect{
+                    _alarmSet.value = it.alarmSet.copy(alarms = it.alarms)
                 }
             }
             catch (ex: Exception) {

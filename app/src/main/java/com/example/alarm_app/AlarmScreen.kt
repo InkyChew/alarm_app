@@ -21,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.alarm_app.ui.navigation.AllAlarmGroupDestination
 import com.example.alarm_app.ui.navigation.AlarmNavHost
+import com.example.alarm_app.ui.navigation.MainDestination
 import com.example.alarm_app.ui.navigation.NavigationDestination
 import com.example.alarm_app.ui.navigation.navigationDestinationMap
 
@@ -57,7 +58,7 @@ fun AlarmApp(
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = navigationDestinationMap[backStackEntry?.destination?.route] ?: AllAlarmGroupDestination
+    val currentScreen = navigationDestinationMap[backStackEntry?.destination?.route] ?: MainDestination
 
     Scaffold(
         topBar = {

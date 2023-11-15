@@ -15,10 +15,15 @@ interface NavigationDestination { /**
 }
 
 val navigationDestinationMap: Map<String, NavigationDestination> = mapOf(
+    "MainDestination" to MainDestination,
     "AllAlarmGroupDestination" to AllAlarmGroupDestination,
     "AlarmGroupDestination" to AlarmGroupDestination,
 )
 
+object MainDestination : NavigationDestination {
+    override val route = "main"
+    @StringRes override val titleRes = R.string.app_name
+}
 
 object AllAlarmGroupDestination : NavigationDestination {
     override val route = "all_alarm_group"

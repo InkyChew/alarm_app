@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.alarm_app.data.Alarm
 import com.example.alarm_app.data.Day
 import com.example.alarm_app.data.DayAlarm
 import com.example.alarm_app.data.IAlarmSetRepo
@@ -40,8 +39,11 @@ class MainViewModel (
     private fun getDayList() {
         viewModelScope.launch {
             try {
-                dayRepo.getAllStream(_yearMonth.value)
-                    .collect{ _dayList.value = it }
+               dayRepo.getAllStreamWithAlarms(_yearMonth.value).collect{
+                    _dayList.value = it.map {dayWithAlarms ->
+                        dayWithAlarms.day.copy(alarms = dayWithAlarms.alarms)
+                    }
+               }
             }
             catch (ex: Exception) {
                 Log.e(TAG, ex.message.toString())
@@ -63,18 +65,31 @@ class MainViewModel (
             it.copy(alarms = it.alarms?.plus(DayAlarm(it.id)))
         }
     }
-    fun updateAlarm(index: Int, alm: Alarm) {
 
-    }
     fun removeAlarm(index: Int) {
-        _day.update {
-            it.copy(alarms = it.alarms?.minus(it.alarms[index]))
+        viewModelScope.launch {
+            try {
+                _day.apply {
+                    value.alarms?.let { alarms ->
+                        val alarm = alarms[index]
+                        dayRepo.deleteAlarm(alarm)
+                        update {
+                            it.copy(alarms = it.alarms?.minus(alarm))
+                        }
+                    }
+                }
+            }
+            catch (ex: Exception) {
+                Log.e(AlarmGroupViewModel.TAG, ex.message.toString())
+            }
         }
     }
 
-    suspend fun updateDayAlarm() {
-        dayRepo.update(_day.value)
-        getDayList()
+    suspend fun updateAlarms() {
+        _day.value.alarms?.let {
+            dayRepo.updateAlarms(it)
+            getDayList()
+        }
     }
 
     private fun getAlarmSetOptions() {
@@ -98,7 +113,7 @@ class MainViewModel (
             try {
                 alarmSetRepo.getStream(id).collect{
                     _day.apply {
-                        val alarms = it.alarms?.map {DayAlarm(value.id) } ?: listOf()
+                        val alarms = it.alarms?.map { DayAlarm(value.id) } ?: listOf()
                         update {
                             it.copy(alarms = it.alarms?.plus(alarms))
                         }

@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    modifier: Modifier = Modifier
 ) {
     val dayList by viewModel.dayList.collectAsState()
     val day by viewModel.day.collectAsState()
@@ -31,7 +32,7 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
@@ -45,7 +46,7 @@ fun MainScreen(
         IconButton(onClick = {
             coroutineScope.launch {
                 try {
-                    viewModel.updateDayAlarm()
+                    viewModel.updateAlarms()
                 }
                 catch (ex: Exception) {
                     Log.e(MainViewModel.TAG, ex.message.toString())

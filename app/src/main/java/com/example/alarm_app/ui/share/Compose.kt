@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun Dropdown(options: Map<*, String>, label: String = "", onSelectionChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf(options.entries.first()) }
+    var selectedOption by remember { mutableStateOf(options.entries.firstOrNull()) }
     // We want to react on tap/press on TextField to show menu
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -35,8 +35,8 @@ fun Dropdown(options: Map<*, String>, label: String = "", onSelectionChange: (St
         TextField(
             modifier = Modifier.menuAnchor(),
             readOnly = true,
-            value = selectedOption.value,
-            onValueChange = { onSelectionChange(selectedOption.key.toString()) },
+            value = selectedOption?.value ?: "",
+            onValueChange = { onSelectionChange(selectedOption!!.key.toString()) },
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
@@ -75,12 +75,11 @@ fun TimeSelector(hour: Int, minute: Int,
             value = hrStr,
             onValueChange = {
                 val h = it.toIntOrNull()
-                if(h == null) hrStr = ""
-                else {
+                if(h != null) {
                     hr = h.coerceIn(0..23)
                     hrStr = hr.toString()
                     onTimeChange(hr, mn)
-                }
+                } else hrStr = ""
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -98,8 +97,7 @@ fun TimeSelector(hour: Int, minute: Int,
                     mn = m.coerceIn(0..59)
                     mnStr = mn.toString()
                     onTimeChange(hr, mn)
-                }
-                else mnStr = ""
+                } else mnStr = ""
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -111,22 +109,6 @@ fun TimeSelector(hour: Int, minute: Int,
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimeSelector2(hour: Int, minute: Int,
-                 onTimeChange: (Int, Int) -> Unit,
-                 modifier: Modifier = Modifier) {
-    val time = rememberTimePickerState(
-        initialHour = hour,
-        initialMinute = minute,
-        is24Hour = true
-    )
-
-    TimeInput(
-        state = time,
-        modifier = modifier.onFocusChanged { onTimeChange(time.hour, time.minute) }
-    )
-}
 @Preview(showBackground = true)
 @Composable
 fun ComponentPreview() {
