@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.alarm_app.R
 import com.example.alarm_app.data.Alarm
+import com.example.alarm_app.data.AlarmSetAlarm
 
 @Composable
 fun AlarmGroup(
@@ -37,7 +39,11 @@ fun AlarmGroup(
         if(alarms != null) {
             LazyColumn {
                 itemsIndexed(alarms) {index, it ->
-                    Alarm(it, { onAlarmRemove(index) })
+                    Alarm(
+                        alarm = it,
+                        onAlarmRemove = { onAlarmRemove(index) },
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
                 }
             }
         }
@@ -51,18 +57,20 @@ fun Alarm(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp)
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            TimeSelector(alarm.hour, alarm.minute)
+            TimeSelector(alarm.hour, alarm.minute,
+                onTimeChange = {hr, mn ->
+                    alarm.hour = hr
+                    alarm.minute = mn
+                },
+                modifier = Modifier.padding(start = 10.dp).weight(1f)
+            )
             Column {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
@@ -79,4 +87,10 @@ fun Alarm(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AlarmPreview() {
+    AlarmGroup(listOf(AlarmSetAlarm(1), AlarmSetAlarm(2)),{},{})
 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.alarm_app.data.Alarm
 import com.example.alarm_app.data.Day
 import com.example.alarm_app.data.DayAlarm
 import com.example.alarm_app.data.IAlarmSetRepo
@@ -62,7 +63,9 @@ class MainViewModel (
             it.copy(alarms = it.alarms?.plus(DayAlarm(it.id)))
         }
     }
+    fun updateAlarm(index: Int, alm: Alarm) {
 
+    }
     fun removeAlarm(index: Int) {
         _day.update {
             it.copy(alarms = it.alarms?.minus(it.alarms[index]))
